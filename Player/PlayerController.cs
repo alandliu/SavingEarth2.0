@@ -4,10 +4,10 @@ using UnityEngine;
 
 
 /* TODO
- 1. Spawn points
- 2. Y-sorting
- 3. Scene transition test
- 4. Set up GM
+ 1. Spawn points <- edit this shit // access SP script for anim maybe
+ 2. Y-sorting  <- remember to change to pivot
+ 3. Scene transition test <- discuss i suppose
+ 4. Set up GM  <- not bad
  5. Maybe set up audio manager
 
 */
@@ -18,17 +18,21 @@ public class PlayerController : MonoBehaviour
     // Private
     [SerializeField]
     private int maxHealth = 3;
-    private int taskNumber;
-    private int charNum;
     private int dir = 1;
     private Vector3 characterScale;
     private GameManager gm;
+    
 
     // Public
     public int curHealth;
+    public int levelNum = 0;
+    public int taskNumber;
+    public int charNum;
     public float speed = 5f;
     public Rigidbody2D rb;
     public Vector2 movement;
+    public bool canMove = true;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -80,5 +84,13 @@ public class PlayerController : MonoBehaviour
         }
 
         transform.localScale = characterScale;
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("End"))
+        {
+            gm.nextLevel();
+        }
     }
 }
