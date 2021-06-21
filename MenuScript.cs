@@ -11,6 +11,8 @@ public class MenuScript : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
+    // Options script is a separate script
+
     public void QuitGame()
     {
         // Check

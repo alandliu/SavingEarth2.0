@@ -7,10 +7,12 @@ using UnityEngine;
  1. Spawn points <- edit this shit // access SP script for anim maybe
  2. Y-sorting  <- remember to change to pivot
  3. Scene transition test <- discuss i suppose
- 4. Set up GM  <- not bad
- 5. Maybe set up audio manager
+ 4. Set up GM  <- continuing
+ 5. Maybe set up audio manager 
 
 */
+
+
 
 
 public class PlayerController : MonoBehaviour
@@ -21,35 +23,58 @@ public class PlayerController : MonoBehaviour
     private int dir = 1;
     private Vector3 characterScale;
     private GameManager gm;
-    
+
 
     // Public
-    public int curHealth;
+    public Animator[] anims = new Animator[4];
+
+    public int curHealth = 3;
     public int levelNum = 0;
-    public int taskNumber;
-    public int charNum;
+    public int taskNumber = 0;
+    public int charNum = -1;
     public float speed = 5f;
     public Rigidbody2D rb;
     public Vector2 movement;
-    public bool canMove = true;
+    public bool spawned = false;
     
 
     // Start is called before the first frame update
     void Start()
     {
-        curHealth = maxHealth;
-        characterScale = transform.localScale;
         gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>();
-        transform.position = gm.spawnPoint;
-        Debug.Log("Spawned at " + gm.spawnPoint);
+        loadPlayer();
+
+        if (curHealth <= 0)
+        {
+            gm.Reset();
+            loadPlayer();
+        }
+        
+        characterScale = transform.localScale;
+
+        // doesnt look so good
+        if (!spawned)
+        {
+            transform.position = gm.spawnPoint;
+            spawned = true;
+            Debug.Log("Spawned at " + gm.spawnPoint);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         // Input stuff
-        checkMove();
-        checkFlip();
+        if (gm.state == GameManager.GameState.freeRoam)
+        {
+            checkMove();
+            checkFlip();
+        }
+        else
+        {
+            movement = Vector2.zero;
+            DialogueManager.Instance.HandleUpdate();
+        }
     }
 
     private void FixedUpdate()
@@ -66,7 +91,7 @@ public class PlayerController : MonoBehaviour
     {
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
-        movement.Normalize();
+        movement.Normalize();   
     }
 
     // Don't need will delete later
@@ -90,7 +115,33 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.CompareTag("End"))
         {
-            gm.nextLevel();
+            if (taskNumber == 3) gm.nextLevel();
         }
+
+        if (collision.CompareTag("event"))
+        {
+            if (collision.GetComponent<Event>().mgNum == taskNumber)
+            {
+                Debug.Log("Event");
+                collision.GetComponent<Interactable>()?.Interact(collision.GetComponent<Event>().mgName);
+                savePlayer();
+                //gm.loadMG(collision.GetComponent<Event>().mgName);
+            }
+        }
+    }
+
+    private void loadPlayer()
+    {
+        curHealth = gm.playerHealth;
+        taskNumber = gm.playerTask;
+        transform.position = new Vector2(gm.playerpos.x - 1f, gm.playerpos.y - 1f);
+        spawned = gm.spawned;
+    }
+    private void savePlayer()
+    {
+        gm.playerHealth = curHealth;
+        gm.playerTask = taskNumber;
+        gm.playerpos = transform.position;
+        gm.spawned = spawned;
     }
 }
