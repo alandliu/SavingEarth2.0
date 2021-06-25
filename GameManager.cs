@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Due to plebian programming, I'll be using PlayerPrefs for data transfer between scenes
 
 public class GameManager : MonoBehaviour
 {

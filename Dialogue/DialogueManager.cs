@@ -62,6 +62,7 @@ public class DialogueManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
         {
             ++currentLine;
+            dialogueText.text = "";
             if (currentLine < dialogue.Lines.Count)
             {
                 StartCoroutine(TypeDialogue(dialogue.Lines[currentLine], eventName));
