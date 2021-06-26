@@ -11,7 +11,7 @@ public class Obstacle : MonoBehaviour
     private void Update()
     {
         rng = Random.Range(0, 5000);
-        if (rng < 10)
+        if (rng < 20)
         {
             Instantiate(obstacle, transform.position, transform.rotation);
         }
@@ -19,7 +19,7 @@ public class Obstacle : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + new Vector2(1f, 0) * speed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + new Vector2(1f, 0) * FindObjectOfType<GameManagerMG1>().speed * Time.fixedDeltaTime);
     }
 
 }

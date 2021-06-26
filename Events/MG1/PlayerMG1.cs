@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMG1 : MonoBehaviour
 {
     public enum playerLoc { top, middle, bottom}
     public playerLoc location;
+
     public Rigidbody2D rb;
     public GameObject[] points = new GameObject[4];
+    public GameObject text;
+
     public int curLoc;
     public int health = 3;
     public float speed = 5f;
@@ -18,6 +22,7 @@ public class PlayerMG1 : MonoBehaviour
         curLoc = Random.Range(0, 4);
         transform.position = points[curLoc].transform.position;
         updateLocation();
+        text.GetComponent<Text>().text = "Health: " + health;
         
     }
 
@@ -25,7 +30,7 @@ public class PlayerMG1 : MonoBehaviour
     void FixedUpdate()
     {
         transform.position = Vector3.MoveTowards(transform.position, points[curLoc].transform.position, speed);
-        rb.MovePosition(rb.position + new Vector2(1f, 0) * speed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + new Vector2(1f, 0) * FindObjectOfType<GameManagerMG1>().speed * Time.fixedDeltaTime);
     }
 
     public void moveUp()
@@ -63,6 +68,7 @@ public class PlayerMG1 : MonoBehaviour
         if (collision.CompareTag("Obstacle"))
         {
             health--;
+            text.GetComponent<Text>().text = "Health: " + health;
             Destroy(collision.gameObject);
             if (health == 0)
             {

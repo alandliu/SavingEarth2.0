@@ -1,18 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class GameManagerMG2 : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public GameObject text;
+    public int orbsLeft;
+    public bool hasEnded;
+
     void Start()
     {
-        
+        text.GetComponent<Text>().text = "Orbs Left: " + orbsLeft;
+        hasEnded = false;
+        orbsLeft = 100;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void updateScore(int orbsDestroyed)
     {
-        
+        if (orbsLeft >= 0) orbsLeft -= orbsDestroyed;
+        text.GetComponent<Text>().text = "Orbs Left: " + orbsLeft;
+        orbsLeft = Mathf.Max(0, orbsLeft);
+        if (orbsLeft <= 0)
+        {
+            if (!hasEnded)
+            {
+                GameManager.instance.returnWin();
+                hasEnded = true;
+            }
+        }
     }
 }

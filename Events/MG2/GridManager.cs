@@ -39,7 +39,7 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Z))
+        /*if (Input.GetKeyDown(KeyCode.Z))
         {
             updateGrid();
         }
@@ -47,7 +47,7 @@ public class GridManager : MonoBehaviour
         {
             colorGrid[Random.Range(0, 10), Random.Range(0, 10)].GetComponent<ColorUnit>().destroy();
             checkGrid();
-        }
+        }*/
     }
 
     private GameObject SpawnTile(int x, int y)
@@ -74,6 +74,7 @@ public class GridManager : MonoBehaviour
                     colorGrid[0, i] = g;
                     g.GetComponent<ColorUnit>().x = 0;
                     g.GetComponent<ColorUnit>().y = i;
+                    continue;
                 }
 
             }

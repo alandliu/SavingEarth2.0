@@ -9,6 +9,6 @@ public class Points : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + new Vector2(1f, 0) * speed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + new Vector2(1f, 0) * FindObjectOfType<GameManagerMG1>().speed * Time.fixedDeltaTime);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 /* TODO
@@ -33,9 +34,11 @@ public class PlayerController : MonoBehaviour
     public int taskNumber = 0;
     public int charNum = -1;
     public float speed = 5f;
+    public bool spawned = false;
+
     public Rigidbody2D rb;
     public Vector2 movement;
-    public bool spawned = false;
+    public GameObject text;
     
 
     // Start is called before the first frame update
@@ -49,7 +52,9 @@ public class PlayerController : MonoBehaviour
             gm.Reset();
             loadPlayer();
         }
-        
+
+        text.GetComponent<Text>().text = "Health: " + curHealth;
+
         characterScale = transform.localScale;
 
         // doesnt look so good

@@ -13,6 +13,7 @@ public class DialogueManager : MonoBehaviour
     public int currentLine = 0;
     public Dialogue dialogue;
     public string eventName;
+    public bool isDone;
 
 
     public static DialogueManager Instance { get; private set; }
@@ -20,6 +21,7 @@ public class DialogueManager : MonoBehaviour
    private void Awake()
     {
         Instance = this;
+        isDone = true;
         /*if (Instance == null)
         {
             Instance = this;
@@ -44,6 +46,7 @@ public class DialogueManager : MonoBehaviour
     public IEnumerator TypeDialogue(string dialogue, string eventName)
     {
         dialogueText.text = "";
+        isDone = false;
         if (dialogue.EndsWith("0"))
         {
             currentLine = 0;
@@ -55,11 +58,13 @@ public class DialogueManager : MonoBehaviour
             yield return new WaitForSeconds(1f / lettersPerSecond);
         }
 
+        isDone = true;
+
     }
 
     public void HandleUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z) && isDone)
         {
             ++currentLine;
             dialogueText.text = "";

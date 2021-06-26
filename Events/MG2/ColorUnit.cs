@@ -58,6 +58,7 @@ public class ColorUnit : MonoBehaviour
         {
             colorGrid[x, y + 1].GetComponent<ColorUnit>().destroy();
         }
+        FindObjectOfType<GameManagerMG2>().updateScore(1);
         Destroy(gameObject);
     }
 }
