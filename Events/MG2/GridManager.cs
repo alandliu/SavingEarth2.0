@@ -11,10 +11,12 @@ public class GridManager : MonoBehaviour
     public int vert, horiz, columns, rows;
     public GameObject sprite;
     int randNum;
+    public bool canMoveEvery;
 
     // Start is called before the first frame update
     void Start()
     {
+        canMoveEvery = true;
         vert = (int)Camera.main.orthographicSize;
         horiz = vert * (Screen.width / Screen.height);
         //columns = horiz * 2;
@@ -48,6 +50,7 @@ public class GridManager : MonoBehaviour
             colorGrid[Random.Range(0, 10), Random.Range(0, 10)].GetComponent<ColorUnit>().destroy();
             checkGrid();
         }*/
+        checkEvery();
     }
 
     private GameObject SpawnTile(int x, int y)
@@ -101,7 +104,7 @@ public class GridManager : MonoBehaviour
                     if (cur.x >= 9)
                     {
                         GameManager.instance.returnLoss();
-                        continue;
+                        break;
                     }
                     cur.x += 1;
                     //cur.y++;
@@ -123,4 +126,21 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
+    public void checkEvery()
+    {
+        for (int i = 0; i < columns; i++)
+        {
+            for (int j = 0; j < rows; j++)
+            {
+                if (colorGrid[i, j] != null && colorGrid[i, j].GetComponent<ColorUnit>().canMove == false)
+                {
+                    canMoveEvery = false;
+                    return;
+                }
+            }
+        }
+
+        canMoveEvery = true;
+    }    
 }

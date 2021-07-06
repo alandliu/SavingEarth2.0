@@ -38,13 +38,16 @@ public class PlayerController : MonoBehaviour
 
     public Rigidbody2D rb;
     public Vector2 movement;
+    public Vector2 respawnPoint;
     public GameObject text;
+    public Animator anim;
     
 
     // Start is called before the first frame update
     void Start()
     {
         gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>();
+        anim = GetComponent<Animator>();
         loadPlayer();
 
         if (curHealth <= 0)
@@ -74,10 +77,12 @@ public class PlayerController : MonoBehaviour
         {
             checkMove();
             checkFlip();
+            UpdateWalk();
         }
         else
         {
             movement = Vector2.zero;
+            UpdateWalk();
             DialogueManager.Instance.HandleUpdate();
         }
     }
@@ -96,7 +101,7 @@ public class PlayerController : MonoBehaviour
     {
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
-        movement.Normalize();   
+        movement.Normalize();
     }
 
     // Don't need will delete later
@@ -104,16 +109,26 @@ public class PlayerController : MonoBehaviour
     {
         if (movement.x > 0)
         {
-            characterScale.x = 5f;
+            characterScale.x = 1f;
             dir = 1;
         }
-        if (movement.x < 0)
+        else if (movement.x < 0)
         {
-            characterScale.x = -5f;
+            characterScale.x = -1f;
             dir = -1;
-        }
+        } 
 
         transform.localScale = characterScale;
+    }
+
+    private void UpdateWalk()
+    {
+        if (movement.x > 0.01f || movement.y > 0.01f || movement.x < -0.01f || movement.y < -0.01f)
+        {
+            if (!anim.GetBool("isWalking")) anim.SetBool("isWalking", true);
+        } else if (movement.Equals(Vector2.zero)) {
+            if (anim.GetBool("isWalking")) anim.SetBool("isWalking", false);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -129,9 +144,16 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("Event");
                 collision.GetComponent<Interactable>()?.Interact(collision.GetComponent<Event>().mgName);
+                respawnPoint = collision.transform.GetChild(0).position;
                 savePlayer();
                 //gm.loadMG(collision.GetComponent<Event>().mgName);
             }
+        }
+
+        if (collision.CompareTag("NPC"))
+        {
+            Debug.Log("NPC");
+            collision.GetComponent<Interactable>()?.Interact("NPC");
         }
     }
 
@@ -139,14 +161,15 @@ public class PlayerController : MonoBehaviour
     {
         curHealth = gm.playerHealth;
         taskNumber = gm.playerTask;
-        transform.position = new Vector2(gm.playerpos.x - 1f, gm.playerpos.y - 1f);
+        //transform.position = new Vector2(gm.playerpos.x - 1f, gm.playerpos.y - 1f);
+        transform.position = gm.playerpos;
         spawned = gm.spawned;
     }
     private void savePlayer()
     {
         gm.playerHealth = curHealth;
         gm.playerTask = taskNumber;
-        gm.playerpos = transform.position;
+        gm.playerpos = respawnPoint;
         gm.spawned = spawned;
     }
 }

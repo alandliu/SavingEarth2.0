@@ -6,10 +6,17 @@ public class Projectile : MonoBehaviour
 {
     private bool isPressed;
     private float maxDragDistance = 1.5f;
+    private float minDragDistance = 0.5f;
+    private float lastImageXPosition;
     
 
     public float releaseDelay;
+    public float distanceBetweenImages;
     public int shotNum;
+
+    public float rotZ;
+    public float rotSpeed;
+    public bool isRotating;
 
     public Rigidbody2D rb;
     public SpringJoint2D sj;
@@ -26,6 +33,7 @@ public class Projectile : MonoBehaviour
 
         lr.enabled = false;
         spawnPoint = transform.position;
+        isRotating = false;
 
         releaseDelay = 1 / (sj.frequency * 4);
         shotNum = 0;
@@ -35,6 +43,18 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isRotating)
+        {
+            rotZ += Time.deltaTime * rotSpeed;
+
+            if(Mathf.Abs(transform.position.x - lastImageXPosition) > distanceBetweenImages)
+            {
+                ProjectileAfterImagePool.Instance.GetFromPool();
+                lastImageXPosition = transform.position.x;
+            }
+        }
+        transform.rotation = Quaternion.Euler(0, 0, rotZ);
+
         if (isPressed)
         {
             DragBall();
@@ -78,12 +98,22 @@ public class Projectile : MonoBehaviour
     {
         isPressed = false;
         rb.isKinematic = false;
-        StartCoroutine(Release());
+        if (checkMin())
+        {
+            ProjectileAfterImagePool.Instance.GetFromPool();
+            lastImageXPosition = transform.position.x;
+            StartCoroutine(Release());
+        } else
+        {
+            transform.position = spawnPoint;
+            lr.enabled = false;
+        }
     }
 
     private IEnumerator Release()
     {
         yield return new WaitForSeconds(releaseDelay);
+        isRotating = true;
         sj.enabled = false;
         lr.enabled = false;
     }
@@ -98,6 +128,9 @@ public class Projectile : MonoBehaviour
             sj.enabled = true;
             rb.velocity = Vector2.zero;
             FindObjectOfType<GridManager>().checkGrid();
+            isRotating = false;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            rotZ = 0;
         }
 
         if (collision.CompareTag("Deletion"))
@@ -105,6 +138,9 @@ public class Projectile : MonoBehaviour
             transform.position = spawnPoint;
             sj.enabled = true;
             rb.velocity = Vector2.zero;
+            isRotating = false;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            rotZ = 0;
         }
 
         if (shotNum == 2)
@@ -113,4 +149,17 @@ public class Projectile : MonoBehaviour
             shotNum = 0;
         }
     }
+
+    private bool checkMin()
+    {
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float distance = Vector2.Distance(mousePosition, slingRb.position);
+
+        if (distance >= minDragDistance)
+        {
+            return true;
+        }
+        return false;
+    }
+
 }

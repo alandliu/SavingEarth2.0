@@ -47,13 +47,15 @@ public class DialogueManager : MonoBehaviour
     {
         dialogueText.text = "";
         isDone = false;
-        if (dialogue.EndsWith("0"))
-        {
-            currentLine = 0;
-            GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>().loadMG(eventName);
-        }
         foreach (var letter in dialogue.ToCharArray())
         {
+            if (dialogue.EndsWith("0"))
+            {
+                currentLine = 0;
+                GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>().loadMG(eventName);
+                dialogueBox.SetActive(false);
+                break;
+            }
             dialogueText.text += letter;
             yield return new WaitForSeconds(1f / lettersPerSecond);
         }
@@ -75,6 +77,7 @@ public class DialogueManager : MonoBehaviour
             else
             {
                 dialogueBox.SetActive(false);
+                currentLine = 0;
                 GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>().state = GameManager.GameState.freeRoam;
             }
         } 

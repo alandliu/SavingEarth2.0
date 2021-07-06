@@ -18,12 +18,14 @@ public class GameManager : MonoBehaviour
     public int playerTask = 0;
     public int playerHealth = 3;
     public Vector2 playerpos;
+
+
     public enum GameState { freeRoam, Frozen };
     public GameState state = GameState.freeRoam;
     
 
     private void Awake()
-    {
+    { 
         if (instance == null)
         {
             instance = this;
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     public void nextLevel()
     {
         Debug.Log("Next Level");
@@ -41,7 +44,6 @@ public class GameManager : MonoBehaviour
         state = GameState.freeRoam;
         curScene++;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Note MG scene indices must be higher
-
     }
 
    
@@ -49,6 +51,7 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(mgName);
         state = GameState.Frozen;
+        //transition = GameObject.FindGameObjectWithTag("Transition").GetComponent<Animator>();
     }
 
     public void returnWin()
@@ -56,6 +59,7 @@ public class GameManager : MonoBehaviour
         playerTask++;
         state = GameState.freeRoam;
         SceneManager.LoadScene(curScene);
+        //transition = GameObject.FindGameObjectWithTag("Transition").GetComponent<Animator>();
     }
 
     public void returnLoss()
@@ -63,6 +67,7 @@ public class GameManager : MonoBehaviour
         playerHealth--;
         state = GameState.freeRoam;
         SceneManager.LoadScene(curScene);
+        //transition = GameObject.FindGameObjectWithTag("Transition").GetComponent<Animator>();
     }
 
     public void Reset()

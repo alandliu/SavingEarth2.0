@@ -16,6 +16,10 @@ public class GameManagerMG2 : MonoBehaviour
         orbsLeft = 100;
     }
 
+    public void checkEvery()
+    {
+
+    }
     public void updateScore(int orbsDestroyed)
     {
         if (orbsLeft >= 0) orbsLeft -= orbsDestroyed;
