@@ -13,6 +13,11 @@ public class GridManager : MonoBehaviour
     int randNum;
     public bool canMoveEvery;
 
+
+    // win/loss
+    public GameObject LossScreen;
+    public GameObject WinScreen;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -70,8 +75,8 @@ public class GridManager : MonoBehaviour
             GameObject g;
             if (colorGrid[1, i] != null)
             {
-                randNum = Random.Range(0, 2);
-                if (randNum == 0)
+                randNum = Random.Range(0, 100);
+                if (randNum < 30)
                 {
                     g = Instantiate(colorGrid[1, i], Grid[0, i].transform.position, transform.rotation);
                     colorGrid[0, i] = g;
@@ -103,7 +108,9 @@ public class GridManager : MonoBehaviour
 
                     if (cur.x >= 9)
                     {
-                        GameManager.instance.returnLoss();
+                        //GameManager.instance.returnLoss();
+                        Time.timeScale = 0f;
+                        LossScreen.SetActive(true);
                         break;
                     }
                     cur.x += 1;

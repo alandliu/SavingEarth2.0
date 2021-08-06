@@ -3,19 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-public class HealthBar : MonoBehaviour
+public class WaterBar : MonoBehaviour
 {
     public Slider slider;
     public Gradient gradient;
     public Image fill;
-    public GameObject plot;
-    int num;
+
+    public int refillRate = 5;
+    public int refillTick = 1;
 
 
     public void Start()
     {
-        transform.position = new Vector2(plot.transform.position.x, plot.transform.position.y - 1.5f);
+        SetMaxHealth(100);
+        StartCoroutine(refill());
+    }
+
+    public IEnumerator refill()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(refillTick);
+            setHealth(Mathf.Min(((int) slider.value + refillRate), 100));
+        }
     }
     public void SetMaxHealth(int health)
     {

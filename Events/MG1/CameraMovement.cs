@@ -9,6 +9,8 @@ public class CameraMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.position = transform.position + new Vector3(1f, 0, 0) * FindObjectOfType<GameManagerMG1>().speed * Time.fixedDeltaTime;
+        speed = FindObjectOfType<GameManagerMG1>().speed;
+        if (FindObjectOfType<Timer>().secondsLeft <= 2) speed = 0f;
+        transform.position = transform.position + new Vector3(1f, 0, 0) * speed * Time.fixedDeltaTime;
     }
 }

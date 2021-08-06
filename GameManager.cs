@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     
     public static GameManager instance;
     public Vector2 spawnPoint;
+    public Vector2 winPoint;
+    public Vector2 lossPoint;
     public int curScene = 1;
     public bool isRunning = true;  // for dialogue ig
     public bool spawned = false;
@@ -39,6 +41,7 @@ public class GameManager : MonoBehaviour
     public void nextLevel()
     {
         Debug.Log("Next Level");
+        playerHealth = 3;
         spawned = false;
         playerTask = 0;
         state = GameState.freeRoam;
@@ -56,16 +59,20 @@ public class GameManager : MonoBehaviour
 
     public void returnWin()
     {
+        Time.timeScale = 1f;
         playerTask++;
         state = GameState.freeRoam;
+        playerpos = winPoint;
         SceneManager.LoadScene(curScene);
         //transition = GameObject.FindGameObjectWithTag("Transition").GetComponent<Animator>();
     }
 
     public void returnLoss()
     {
+        Time.timeScale = 1f;
         playerHealth--;
         state = GameState.freeRoam;
+        playerpos = lossPoint;
         SceneManager.LoadScene(curScene);
         //transition = GameObject.FindGameObjectWithTag("Transition").GetComponent<Animator>();
     }

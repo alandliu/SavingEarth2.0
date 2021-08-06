@@ -9,12 +9,17 @@ public class PlayerMG1 : MonoBehaviour
     public playerLoc location;
 
     public Rigidbody2D rb;
+    public SpriteRenderer sr;
     public GameObject[] points = new GameObject[4];
-    public GameObject text;
+    public GameObject[] hearts = new GameObject[3];
+    public GameObject loseScreen;
+    public Sprite heartEmpty;
 
     public int curLoc;
     public int health = 3;
     public float speed = 5f;
+    public float invincTime = 2f;
+    public bool isInvincible = false;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +27,7 @@ public class PlayerMG1 : MonoBehaviour
         curLoc = Random.Range(0, 4);
         transform.position = points[curLoc].transform.position;
         updateLocation();
-        text.GetComponent<Text>().text = "Health: " + health;
+        sr = GetComponent<SpriteRenderer>();
         
     }
 
@@ -65,16 +70,43 @@ public class PlayerMG1 : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Obstacle"))
+        if (collision.CompareTag("Obstacle") && !isInvincible)
         {
+            StartCoroutine(invincible());
+            StartCoroutine(blink());
             health--;
-            text.GetComponent<Text>().text = "Health: " + health;
-            Destroy(collision.gameObject);
+            //text.GetComponent<Text>().text = "Health: " + health;
+            hearts[health].GetComponent<Image>().sprite = heartEmpty;
             if (health == 0)
             {
                 Debug.Log("Game Over");
-                GameManager.instance.returnLoss();
+                Time.timeScale = 0;
+                loseScreen.SetActive(true);
             }
         }
+    }
+
+    IEnumerator invincible()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincTime);
+        isInvincible = false;
+    }
+
+    IEnumerator blink()
+    {
+        while (isInvincible)
+        {
+            if (sr.color.a == 0)
+            {
+                sr.color = new Color(1, 1, 1, 1);
+            }
+            else
+            {
+                sr.color = new Color(1, 1, 1, 0);
+            }
+            yield return new WaitForSeconds(1f / 30f);
+        }
+        sr.color = new Color(1, 1, 1, 1);
     }
 }

@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-public class HealthBar : MonoBehaviour
+public class CityBar : MonoBehaviour
 {
     public Slider slider;
     public Gradient gradient;
+    public GameObject lossScreen;
     public Image fill;
-    public GameObject plot;
-    int num;
+
 
 
     public void Start()
     {
-        transform.position = new Vector2(plot.transform.position.x, plot.transform.position.y - 1.5f);
+        SetMaxHealth(100);
     }
     public void SetMaxHealth(int health)
     {
@@ -28,6 +27,11 @@ public class HealthBar : MonoBehaviour
     public void setHealth(int health)
     {
         slider.value = health;
+        if (slider.value <= 0)
+        {
+            Time.timeScale = 0f;
+            lossScreen.SetActive(true);
+        }
 
         fill.color = gradient.Evaluate(slider.normalizedValue);
     }

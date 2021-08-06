@@ -39,8 +39,11 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;
     public Vector2 movement;
     public Vector2 respawnPoint;
+    public Vector2 lossPoint;
     public GameObject text;
     public Animator anim;
+    public Image[] hearts;
+    public Sprite emptySprite;
     
 
     // Start is called before the first frame update
@@ -56,7 +59,8 @@ public class PlayerController : MonoBehaviour
             loadPlayer();
         }
 
-        text.GetComponent<Text>().text = "Health: " + curHealth;
+        loadHearts();
+        //text.GetComponent<Text>().text = "Health: " + curHealth;
 
         characterScale = transform.localScale;
 
@@ -109,12 +113,12 @@ public class PlayerController : MonoBehaviour
     {
         if (movement.x > 0)
         {
-            characterScale.x = 1f;
+            characterScale.x = 0.75f;
             dir = 1;
         }
         else if (movement.x < 0)
         {
-            characterScale.x = -1f;
+            characterScale.x = -0.75f;
             dir = -1;
         } 
 
@@ -145,6 +149,7 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("Event");
                 collision.GetComponent<Interactable>()?.Interact(collision.GetComponent<Event>().mgName);
                 respawnPoint = collision.transform.GetChild(0).position;
+                lossPoint = collision.transform.GetChild(1).position;
                 savePlayer();
                 //gm.loadMG(collision.GetComponent<Event>().mgName);
             }
@@ -169,7 +174,16 @@ public class PlayerController : MonoBehaviour
     {
         gm.playerHealth = curHealth;
         gm.playerTask = taskNumber;
-        gm.playerpos = respawnPoint;
+        gm.winPoint = respawnPoint;
+        gm.lossPoint = lossPoint;
         gm.spawned = spawned;
+    }
+
+    private void loadHearts()
+    {
+        for (int i = 0; i < maxHealth - curHealth; i++)
+        {
+            hearts[i].sprite = emptySprite;
+        }
     }
 }

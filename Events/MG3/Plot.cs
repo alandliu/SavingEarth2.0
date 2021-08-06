@@ -17,11 +17,16 @@ public class Plot : MonoBehaviour
 
     public GameManagerMG3 gm;
     public GameObject thoughtBubble;
+    public GameObject groundFinalPlot;
     public GameObject[] Needs = new GameObject[3];
     public Sprite[] levelImages = new Sprite[4];
     public SpriteRenderer sr;
+    public Button needs;
 
-
+    private void Awake()
+    {
+        //transform.position = new Vector3(transform.position.x + (Random.Range(0f, 0.5f) * (float)Random.Range(-1, 2)), transform.position.y + (Random.Range(0f, 0.5f) * (float)Random.Range(-1, 2)), transform.position.z);
+    }
     private void Start()
     {
         gm = FindObjectOfType<GameManagerMG3>();
@@ -34,7 +39,7 @@ public class Plot : MonoBehaviour
         thoughtBubble.SetActive(false);
         for (int i = 0; i < Needs.Length; i++) Needs[i].SetActive(false);
         sr.sprite = levelImages[curLevel];
-
+        needs.transform.position = transform.position;
 
     }
 
@@ -72,7 +77,7 @@ public class Plot : MonoBehaviour
     public void activateNeed()
     {
         randNeed = Random.Range(0, 3);
-        thoughtBubble.SetActive(true);
+        //thoughtBubble.SetActive(true);
         Needs[randNeed].SetActive(true);
     }
 
@@ -86,14 +91,19 @@ public class Plot : MonoBehaviour
                 isInNeed = false;
                 gm.Heal(20, num);
                 curDone++;
-                thoughtBubble.SetActive(false);
+                //thoughtBubble.SetActive(false);
                 Needs[randNeed].SetActive(false);
                 if (curDone >= upgradeDone)
                 {
                     curDone = 0;
                     curLevel++;
                     sr.sprite = levelImages[curLevel];
-                    gm.checkWin();
+                    if (curLevel == 3)
+                    {
+                        groundFinalPlot.SetActive(true);
+                        gm.disableBar(num);
+                        gm.checkWin();
+                    }
                 }
                 countingDown = false;
                 damagePerInstance += 2;

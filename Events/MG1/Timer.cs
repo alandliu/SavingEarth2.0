@@ -5,20 +5,26 @@ using UnityEngine.UI;
 
 public class Timer : MonoBehaviour
 {
-    public GameObject textDisplay;
+    public GameObject progressBar;
+    //public GameObject textDisplay;
+    public int maxSeconds = 59;
     public int secondsLeft = 59;
     public bool countingDown = false;
+    public GameObject winScreen;
 
     private void Start()
     {
-        textDisplay.GetComponent<Text>().text = "00:" + secondsLeft;
+        maxSeconds = secondsLeft;
+        //textDisplay.GetComponent<Text>().text = "00:" + secondsLeft;
+        progressBar.GetComponent<ProgressBar>().setMax(secondsLeft);
     }
 
     private void Update()
     {
         if (secondsLeft == 0)
         {
-            GameManager.instance.returnWin();
+            Time.timeScale = 0;
+            winScreen.SetActive(true);
         }
         if (countingDown == false && secondsLeft >= 0)
         {
@@ -31,8 +37,16 @@ public class Timer : MonoBehaviour
         countingDown = true;
         yield return new WaitForSeconds(1);
         secondsLeft -= 1;
-        if (secondsLeft >= 10) textDisplay.GetComponent<Text>().text = "00:" + secondsLeft;
-        else textDisplay.GetComponent<Text>().text = "00:0" + secondsLeft;
+        //if (secondsLeft >= 10) textDisplay.GetComponent<Text>().text = "00:" + secondsLeft;
+        //else textDisplay.GetComponent<Text>().text = "00:0" + secondsLeft;
+        if (secondsLeft <= 3)
+        {
+            progressBar.GetComponent<ProgressBar>().setVal(maxSeconds);
+        }
+        else if ((secondsLeft + 1) % 5 == 0)
+        {
+            progressBar.GetComponent<ProgressBar>().setVal(maxSeconds - secondsLeft);
+        }
         countingDown = false;
     }
 

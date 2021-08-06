@@ -18,6 +18,7 @@ public class GameManagerMG1 : MonoBehaviour
         maxTime = FindObjectOfType<Timer>().secondsLeft;
         time = maxTime;
         speed = 2f;
+        FindObjectOfType<AudioManager>().Play("BGMusic");
     }
 
     private void Update()
@@ -28,7 +29,11 @@ public class GameManagerMG1 : MonoBehaviour
     public void updateDifficulty()
     {
         time = FindObjectOfType<Timer>().secondsLeft;
-        if (maxTime - time != 0) speed = 2f + (float) ((maxTime - time) / divider);
+        if (maxTime - time != 0)
+        {
+            speed = 2f + (float)((maxTime - time) / divider);
+            FindObjectOfType<Obstacle>().cdTime = 10f - (float)((maxTime - time) / 8);
+        }
     }
 
 }
